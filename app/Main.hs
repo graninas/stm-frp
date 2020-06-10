@@ -1,27 +1,39 @@
 module Main where
 
+import qualified Data.Map as Map
+import qualified Data.Set as Set
+
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.STM
 import Control.Concurrent.STM.TVar
-import Control.Monad (when, unless)
+import Control.Monad (when, unless, forever)
 import Control.Concurrent (threadDelay, forkIO, killThread)
 
 import qualified System.Console.Haskeline as HS
 import qualified UI.NCurses as NC
 
+import Morse
 
+-- TODO: micros should be a variable
+startTicker micros = do
+  ticksVar <- atomically $ newTVar False
 
+  threadId <- forkIO $ forever $ do
+    threadDelay micros
+    atomically $ writeTVar ticksVar True
+    -- Should be a lag here? Will the threads resume anyway?
+    atomically $ writeTVar ticksVar False
 
-
-
-
-
+  pure (ticksVar, threadId)
 
 
 main :: IO ()
 main = do
   finishVar <- atomically $ newTVar False
-  cmdThread <- forkIO $ do
+
+  (ticksVar, tickerThreadId) <- startTicker 100
+
+  cmdThreadId <- forkIO $ do
     let loop = do
           mbLine <- HS.getInputLine "> "
           finish <- case mbLine of
@@ -34,7 +46,8 @@ main = do
   atomically $ do
     finished <- readTVar finishVar
     unless finished retry
-  killThread cmdThread
+  killThread cmdThreadId
+  killThread tickerThreadId
 
 --
 -- main :: IO ()
