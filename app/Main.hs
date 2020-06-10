@@ -14,46 +14,17 @@ import qualified UI.NCurses as NC
 
 import Morse
 
--- TODO: micros should be a variable
 startTicker micros = do
   ticksVar <- atomically $ newTVar False
 
   threadId <- forkIO $ forever $ do
     threadDelay micros
     atomically $ writeTVar ticksVar True
-    -- Should be a lag here? Will the threads resume anyway?
-    -- threadDelay 100
-    -- atomically $ writeTVar ticksVar False
     atomically $ do
       tickProcessed <- readTVar ticksVar
       unless tickProcessed retry
 
   pure (ticksVar, threadId)
-
-
--- main :: IO ()
--- main = do
---   finishVar <- atomically $ newTVar False
---
---   (ticksVar, tickerThreadId) <- startTicker 100
---
---   cmdThreadId <- forkIO $ do
---     let loop = do
---           mbLine <- HS.getInputLine "> "
---           finish <- case mbLine of
---             Nothing     -> pure False
---             Just "q"    -> liftIO (atomically (writeTVar finishVar True)) >> pure True
---             Just _      -> pure False
---           unless finish loop
---     HS.runInputT HS.defaultSettings loop
---
---   atomically $ do
---     finished <- readTVar finishVar
---     unless finished retry
---
---   killThread cmdThreadId
---   killThread tickerThreadId
-
 
 startTickerIdx ticksVar ticksIdxVar = forkIO $ forever $ do
 
@@ -104,8 +75,6 @@ doLoop w ticksIdxVar = loop
 
     loop = do
       ev <- NC.getEvent w (Just 0)
-      -- ev <- NC.getEvent w Nothing
-
       case ev of
         Just (NC.EventCharacter 'q') -> pure ()
         Just (NC.EventCharacter 'Q') -> pure ()
