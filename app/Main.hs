@@ -14,6 +14,22 @@ import qualified UI.NCurses as NC
 
 import Morse
 
+{-
+
+ticker -> signal
+
+on signal -> char signals "Hello, world!"
+
+on char signal ->
+  uppercase
+  filter letters
+  toMorse
+  (groupBy 5)
+  print
+-}
+
+
+
 main :: IO ()
 main = do
   ticksVar    <- atomically $ newTVar False
