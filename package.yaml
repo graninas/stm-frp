@@ -43,6 +43,7 @@ dependencies:
 - transformers
 - stm
 - haskeline
+- ncurses
 
 library:
   source-dirs:
