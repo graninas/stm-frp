@@ -1,0 +1,65 @@
+name:                stm-frp
+github:              "graninas/stm-frp"
+license:             BSD3
+author:              "Alexander Granin"
+maintainer:          "graninas@gmail.com"
+copyright:           "Granin A.S. 2020"
+
+description:
+  Experiment with FRP made using STM
+
+default-extensions:
+- GADTs
+- RankNTypes
+- DeriveFunctor
+- DeriveGeneric
+- OverloadedStrings
+- LambdaCase
+- MultiParamTypeClasses
+- ExplicitNamespaces
+- TypeApplications
+- ScopedTypeVariables
+- TypeOperators
+- TypeFamilies
+- DataKinds
+- FlexibleContexts
+- FlexibleInstances
+- PatternSynonyms
+- PolyKinds
+- DefaultSignatures
+- ConstraintKinds
+- NamedFieldPuns
+- TupleSections
+- ViewPatterns
+- MultiWayIf
+- RecordWildCards
+
+dependencies:
+- base >= 4.7 && < 5
+- bytestring
+- mtl
+- containers
+- free
+- transformers
+- stm
+- haskeline
+
+library:
+  source-dirs:
+  - src
+  ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -fhide-source-paths
+
+executables:
+  app:
+    main:                Main.hs
+    source-dirs:         app/
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -Wall
+    # - -O2
